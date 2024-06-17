@@ -1,15 +1,14 @@
 
 
-                      //APP DO FUNCIONARIO
 // Configure o Firebase com suas credenciais
 const firebaseConfig = {
-    apiKey:"AIzaSyC1_u_I_eLTctU6zaf_YAUmhjD6SxsZM7w",
-    authDomain: "testegisele-d5bbb.firebaseapp.com",
-    databaseURL:"https://testegisele-d5bbb-default-rtdb.firebaseio.com/",
-    projectId: "testegisele",
-    storageBucket: "gs://testegisele-d5bbb.appspot.com",
-    messagingSenderId: "594202472296",
-    appId: "1:594202472296:web:715d278177f9ccb71330dd"
+    apiKey: "AIzaSyA-qwFnRwME6Ra1cvKE6xX3d1bBda4NNCw",
+    authDomain: "giseleteste-2e047.firebaseapp.com",
+    databaseURL: " https://giseleteste-2e047-default-rtdb.firebaseio.com/",
+    projectId: "giseleteste-2e047",
+    storageBucket: "gs://giseleteste-2e047.appspot.com",
+    messagingSenderId: "742260467787",
+    appId: "1:742260467787:web:901866dffc776074c1c5ce"
   };
 
 
@@ -17,6 +16,9 @@ const firebaseConfig = {
    const database = firebase.database(); // Inicialize o banco de dados
    const storage = firebase.storage(); // Inicialize o storage
 
+
+
+   //APP DO FUNCIONARIO
 
 function enviarDadosParaFirebaseFuncionario() {
     const nome = document.getElementById('nome').value;
@@ -38,7 +40,7 @@ function enviarDadosParaFirebaseFuncionario() {
                 };
                 database.ref('funcionarios').push(dados)
                 .then(() => {
-                    alert('Dados do usúario enviados com sucesso!');
+                    alert('Dados do usúario enviados com sucesso!, por favor, agora cadastre seu registro de ponto');
                     document.getElementById('nome').value = '';
                     document.getElementById('area').value = '';
                     document.getElementById('endereco').value = '';
@@ -60,34 +62,6 @@ function enviarDadosParaFirebaseFuncionario() {
 }
 
     
-   function consultarPontoPorNome() {
-    const nome = document.getElementById('nomeConsulta').value.trim();
-    const funcionariosRef = database.ref('funcionarios');
-    funcionariosRef.orderByChild('nome').equalTo(nome).once('value', snapshot => {
-    const data = snapshot.val();
-    const lista = document.getElementById('listaFuncionarios');
-    lista.innerHTML = ''; // Limpar lista anterior
-
-    if (data) {
-    Object.keys(data).forEach(key => {
-    const funcionario = data[key];
-    const item = document.createElement('li');
-    item.innerHTML = `<p>Nome: ${funcionario.nome}, <p>Aréa em que trabalha: ${funcionario.area}, <p>Endereço: 
-   ${funcionario.endereco}, <p>Telefone: ${funcionario.telefone}", Imagem: <p><img src="${funcionario.imagemURL}" alt="Imagem do funcionario" 
-   style="width:100px; height:auto;">`;
-    lista.appendChild(item);
-    });
-    } else {
-    lista.innerHTML = '<li>Nenhum funcionario encontrado com esse nome.</li>';
-    }
-    }).catch(error => {
-    console.error('Erro ao buscar funcionarios: ', error);
-    });
-   }
-
-
-
-
 
 
                             //APP DO PONTO DE REGISTRO
@@ -129,7 +103,95 @@ function enviarDadosParaFirebasePonto() {
     }
 }
 
-   function consultarPontoPorData() {
+
+// Função para consultar registros de ponto do usuário logado por data
+function consultarPontoAnterior() {
+    const data = document.getElementById('dataConsulta').value.trim();
+    const registroPontoRef = database.ref('registroPontos');
+    registroPontoRef.orderByChild('data').equalTo(data).once('value', snapshot => {
+        const data = snapshot.val();
+        const lista = document.getElementById('listaPontos');
+        lista.innerHTML = ''; // Limpar lista anterior
+
+        if (data) {
+            Object.keys(data).forEach(key => {
+                const registroPonto = data[key];
+                const item = document.createElement('li');
+                item.innerHTML = `Hora: ${registroPonto.hora}, Data: ${registroPonto.data}, Localização: 
+                ${registroPonto.localizacao}, Imagem: <p><img src="${registroPonto.imagemURL2}" alt="Imagem do ponto" 
+                style="width:100px; height:auto;">`;
+                lista.appendChild(item);
+            });
+        } else {
+            lista.innerHTML = '<li>Nenhum Registro de ponto encontrado com essa data.</li>';
+        }
+    }).catch(error => {
+        console.error('Erro ao buscar registro de pontos: ', error);
+    });
+}
+
+
+
+
+
+
+//ADMINISTRAÇÃO do usuario
+function consultarPontoPorNome() {
+    const nome = document.getElementById('nomeConsulta').value.trim();
+    const funcionariosRef = database.ref('funcionarios');
+    funcionariosRef.orderByChild('nome').equalTo(nome).once('value', snapshot => {
+    const data = snapshot.val();
+    const lista = document.getElementById('listaFuncionarios');
+    lista.innerHTML = ''; // Limpar lista anterior
+
+    if (data) {
+    Object.keys(data).forEach(key => {
+    const funcionario = data[key];
+    const item = document.createElement('li');
+    item.innerHTML = `<p>Nome: ${funcionario.nome}, <p>Aréa em que trabalha: ${funcionario.area}, <p>Endereço: 
+   ${funcionario.endereco}, <p>Telefone: ${funcionario.telefone}", Imagem: <p><img src="${funcionario.imagemURL}" alt="Imagem do funcionario" 
+   style="width:100px; height:auto;">`;
+    lista.appendChild(item);
+    });
+    } else {
+    lista.innerHTML = '<li>Nenhum funcionario encontrado com esse nome.</li>';
+    }
+    }).catch(error => {
+    console.error('Erro ao buscar funcionarios: ', error);
+    });
+   }
+
+
+   function mostrarTodosFuncionarios() {
+    const funcionariosRef = database.ref('funcionarios');
+    funcionariosRef.once('value', snapshot => {
+        const data = snapshot.val();
+        const lista = document.getElementById('listaFuncionarios');
+        lista.innerHTML = ''; // Limpar lista anterior
+
+        if (data) {
+            Object.keys(data).forEach(key => {
+                const funcionario = data[key];
+                const item = document.createElement('li');
+                item.innerHTML = `<p>Nome: ${funcionario.nome}, <p>Área em que trabalha: ${funcionario.area}, <p>Endereço: 
+                ${funcionario.endereco}, <p>Telefone: ${funcionario.telefone}", Imagem: <p><img src="${funcionario.imagemURL}" alt="Imagem do funcionário" 
+                style="width:100px; height:auto;">`;
+                lista.appendChild(item);
+            });
+        } else {
+            lista.innerHTML = '<li>Nenhum funcionário cadastrado.</li>';
+        }
+    }).catch(error => {
+        console.error('Erro ao buscar funcionários: ', error);
+    });
+}
+
+
+
+
+
+//ADMINISTRAÇÃO do registro de ponto
+function consultarPontoPorData() {
     const data = document.getElementById('dataConsulta').value.trim();
     const registroPontoRef = database.ref('registroPontos');
     registroPontoRef.orderByChild('data').equalTo(data).once('value', snapshot => {
@@ -154,70 +216,26 @@ function enviarDadosParaFirebasePonto() {
     });
    }
 
+   function mostrarTodosRegistros() {
+    const registroPontoRef = database.ref('registroPontos');
+    registroPontoRef.once('value', snapshot => {
+        const data = snapshot.val();
+        const lista = document.getElementById('listaPontos');
+        lista.innerHTML = ''; // Limpar lista anterior
 
-
-   //ADMINISTRAÇÃO
-   // Função para listar funcionários na tabela de Funcionários
-function listarFuncionarios() {
-    const funcionariosRef = database.ref('funcionarios');
-
-    funcionariosRef.once('value')
-        .then(snapshot => {
-            const listaFuncionarios = document.getElementById('listaUsuarios');
-            listaFuncionarios.innerHTML = ''; // Limpar conteúdo anterior da lista
-
-            if (snapshot.exists()) {
-                snapshot.forEach(funcionarioSnap => {
-                    const funcionario = funcionarioSnap.val();
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${funcionario.nome}</td>
-                        <td>${funcionario.area}</td>
-                        <td>${funcionario.endereco}</td>
-                        <td>${funcionario.telefone}</td>
-                        <td><img src="${funcionario.imagemURL}" alt="Imagem do funcionário" style="width:100px; height:auto;"></td>
-                    `;
-                    listaFuncionarios.appendChild(row);
-                });
-            } else {
-                listaFuncionarios.innerHTML += '<tr><td colspan="5">Nenhum funcionário cadastrado.</td></tr>';
-            }
-        })
-        .catch(error => {
-            console.error('Erro ao buscar funcionários: ', error);
-        });
+        if (data) {
+            Object.keys(data).forEach(key => {
+                const registroPonto = data[key];
+                const item = document.createElement('li');
+                item.innerHTML = `Hora: ${registroPonto.hora}, Data: ${registroPonto.data}, Localização: 
+                ${registroPonto.localizacao}, Imagem: <p><img src="${registroPonto.imagemURL2}" alt="Imagem do ponto" 
+                style="width:100px; height:auto;">`;
+                lista.appendChild(item);
+            });
+        } else {
+            lista.innerHTML = '<li>Nenhum registro de ponto cadastrado.</li>';
+        }
+    }).catch(error => {
+        console.error('Erro ao buscar registros de ponto: ', error);
+    });
 }
-
-// Função para listar registros de ponto na tabela de Registros de Ponto
-function listarRegistrosPonto() {
-    const registrosRef = database.ref('registroPontos');
-
-    registrosRef.once('value')
-        .then(snapshot => {
-            const listaRegistros = document.getElementById('listaRegistros');
-            listaRegistros.innerHTML = ''; // Limpar conteúdo anterior da lista
-
-            if (snapshot.exists()) {
-                snapshot.forEach(registroSnap => {
-                    const registro = registroSnap.val();
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${registro.hora}</td>
-                        <td>${registro.data}</td>
-                        <td>${registro.localizacao}</td>
-                        <td><img src="${registro.imagemURL2}" alt="Imagem do registro de ponto" style="width:100px; height:auto;"></td>
-                    `;
-                    listaRegistros.appendChild(row);
-                });
-            } else {
-                listaRegistros.innerHTML += '<tr><td colspan="5">Nenhum registro de ponto encontrado.</td></tr>';
-            }
-        })
-        .catch(error => {
-            console.error('Erro ao buscar registros de ponto: ', error);
-        });
-}
-
-// Chame as funções para listar funcionários e registros de ponto ao carregar a página
-listarFuncionarios();
-listarRegistrosPonto();
